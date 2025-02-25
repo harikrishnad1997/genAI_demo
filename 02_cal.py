@@ -5,6 +5,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 import streamlit as st
 import os
+import pytz
 
 
 # Load environment variables from .env file
@@ -86,6 +87,9 @@ def create_ics_file(schedule_text, file_name="Daily_Schedule.ics"):
     # Assume all tasks are scheduled for today
     today = datetime.now().date()
 
+    # Define the EST Timezone
+    est = pytz.timezone('US/Eastern')
+
     # Parsing the GPT response
     for line in schedule_text.splitlines():
         if "Task:" in line:
@@ -93,11 +97,11 @@ def create_ics_file(schedule_text, file_name="Daily_Schedule.ics"):
         elif "Start:" in line:
             start_time_str = line.split(": ")[1].strip()
             # Parse the start time, adding today's date
-            start_time = datetime.strptime(f"{today} {start_time_str}", "%Y-%m-%d %H:%M")
+            start_time = est.localize(datetime.strptime(f"{today} {start_time_str}", "%Y-%m-%d %H:%M"))
         elif "End:" in line:
             end_time_str = line.split(": ")[1].strip()
             # Parse the end time, adding today's date
-            end_time = datetime.strptime(f"{today} {end_time_str}", "%Y-%m-%d %H:%M")
+            end_time = est.localize(datetime.strptime(f"{today} {end_time_str}", "%Y-%m-%d %H:%M"))
             
             # Create a calendar event
             event = Event()
@@ -111,7 +115,7 @@ def create_ics_file(schedule_text, file_name="Daily_Schedule.ics"):
         f.writelines(calendar)
 
     return file_name
-st.set_page_config(page_title="GenAI Calendar helper", layout="wide")
+
 # User input section
 st.title("Daily Productivity Planner with Calendar Export")
 tasks = st.text_area("Enter your goals for the day")
