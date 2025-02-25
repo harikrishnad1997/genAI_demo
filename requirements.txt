@@ -2,3 +2,4 @@ google-generativeai
 streamlit
 python-dotenv
 ics
+pytz
