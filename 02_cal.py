@@ -111,7 +111,7 @@ def create_ics_file(schedule_text, file_name="Daily_Schedule.ics"):
         f.writelines(calendar)
 
     return file_name
-
+st.set_page_config(page_title="GenAI Calendar helper", layout="wide")
 # User input section
 st.title("Daily Productivity Planner with Calendar Export")
 tasks = st.text_area("Enter your goals for the day")
